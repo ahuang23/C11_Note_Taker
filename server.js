@@ -13,7 +13,7 @@ try {
    console.error("Bad file, resetting db")
 };
 
-console.log({notes});
+// console.log(notes);
 
 
 
@@ -31,27 +31,27 @@ app.use(express.static('public'));
 
 
 // Routes
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/index.html'));
-});
+
 
 app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, './public/notes.html'));
 });
 
+app.get('/', function(req,res) {
+    res.sendFile(path.join(__dirname, "./public/index.html"));
+});
 
+
+// GET Notes
 app.get('/api/notes', (req, res) => {
     res.json(notes);    
 });
 
+// POST Notes
 app.post('/api/notes', (req, res) => {
     let newNote = req.body;
-
-    console.info('New note added')
-    
     const uuid = uuid4();
-    console.log(uuid);
-    // notes[uuid] = newNote;
+
     newNote.id = uuid;
     notes.push(newNote);
     console.log(notes);
@@ -59,10 +59,10 @@ app.post('/api/notes', (req, res) => {
     updateDb();
 
     return res.json(newNote);
-    // console.log(newNote);
-    // console.log(uuid4());
+
 })
 
+// DELETE Notes
 app.delete('/api/notes/:id', (req, res) => {
     const id = req.params.id;
     let found = false;
@@ -82,6 +82,7 @@ app.delete('/api/notes/:id', (req, res) => {
     };
 })
 
+// Write File
 function updateDb() {
     fs.writeFile("db/db.json",JSON.stringify(notes, null, 2), (err) => err ? console.log(err) : console.log('Success!'));
 }
